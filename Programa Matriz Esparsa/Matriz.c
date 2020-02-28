@@ -165,7 +165,7 @@ int RetornaValorPosi(MatrizEsp *m, int linha, int coluna){
     int temp = EncontraColuna(aux->info, coluna);
 	if(temp==-1){
         printf("O valor eh 0\n");
-        return;
+        return 0;
 	}
 	EntradaMatriz *p = RetornaElemPosi(aux->info, temp);
 	return p->valor;
@@ -200,8 +200,8 @@ void MostraMatriz(MatrizEsp *m){
             }
         };
 		aux = aux->prox;
+        printf("\n");
 	}
-	printf("\n");
 }
 void SomaMatriz(MatrizEsp *m1, MatrizEsp *m2, MatrizEsp *m3){ //soma m1 e m2, armazena em m3
     if(m1->lin != m2->lin || m1->col != m2->col){
