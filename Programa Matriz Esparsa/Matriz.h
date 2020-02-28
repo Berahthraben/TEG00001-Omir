@@ -14,10 +14,8 @@ typedef struct{
 }MatrizEsp;
 
 typedef struct{ //Estrutura auxiliar para o menu na Main
-    int reg1, reg2, reg3;
-    MatrizEsp *m1;
-    MatrizEsp *m2;
-    MatrizEsp *m3; //m3 nao pode ser manipulada, serve apenas para guardar resultados de m1+m2 ou m1*m2
+    MatrizEsp *arrayPrincipal;
+    int tamanhoAtual;
 } Registro;
 
 int Inicializa_MatrizEsp(MatrizEsp *m, int linha, int coluna);

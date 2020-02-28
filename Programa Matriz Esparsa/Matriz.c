@@ -178,7 +178,10 @@ void MostraMatriz(MatrizEsp *m){
                     printf(" 0");
                 }
             }
-        }
+        }EntradaMatriz en = malloc(sizeof(EntradaMatriz));
+                en.coluna = colunas;
+                en.lin = linhas;
+                EditaValor(reg.arrayPrincipal[registroSelecionado-1], linhas, colunas, &en);
 		printf("\n");
 		aux = aux->prox;
 	}
