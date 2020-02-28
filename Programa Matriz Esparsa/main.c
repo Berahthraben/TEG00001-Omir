@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Matriz.h"
+#include "Menu.h"
 
 Registro reg;
 
@@ -10,7 +11,7 @@ int main(void){
     menuPrincipal();
     int i = 0;
     for(i = 0; i < reg.tamanhoAtual; i++){
-        DesalocaMatriz(reg.arrayPrincipal[i]);
+        DesalocaMatriz(&reg.arrayPrincipal[i]);
     };
 	return 0;
 }

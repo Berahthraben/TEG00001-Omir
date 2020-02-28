@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void menuGrafo();
-void menuOperarMatriz();
+int menuGrafo();
+int menuOperarMatriz();
 void menuPrincipal();

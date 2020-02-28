@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include "conio.h"
 #include "Matriz.h"
+#include "Menu.h"
 
 extern Registro reg;
 
@@ -27,7 +29,7 @@ void menuPrincipal(){
                     break;
                 }
             }else{
-                printf("ERRO, NÃO HÁ MATRIZ DIGITADA. PRIMEIRO ADICIONE UMA ANTES DE OPERAR OS GRAFOS.\N");
+                printf("ERRO, NÃO HÁ MATRIZ DIGITADA. PRIMEIRO ADICIONE UMA ANTES DE OPERAR OS GRAFOS.\n");
             }
         }else if(resp == 'l' || resp == 'L'){
             clrscr();
@@ -44,8 +46,8 @@ int menuOperarMatriz(){ // Permite incluir/remover/alterar uma matriz no registr
     char resp;
     while(resp!='e'){
         if(resp == '0'){
-            printf("----MENU DE MATRIZES, DIGITE A OPCAO DESEJADA----\n");
-        void    "0 - MOSTRAR ESSE DIÁLOGO NOVAMENTE\n"
+            printf("----MENU DE MATRIZES, DIGITE A OPCAO DESEJADA----\n"
+            "0 - MOSTRAR ESSE DIÁLOGO NOVAMENTE\n"
             "1 - CRIAR MATRIZ EM UM DOS REGISTROS\n"
             "2 - INSERIR MATRIZ DE ARQUIVO EM UM REGISTRO (NÃO FUNCIONAL)\n"
             "3 - EDITAR UMA MATRIZ EXISTENTE\n"
@@ -55,7 +57,7 @@ int menuOperarMatriz(){ // Permite incluir/remover/alterar uma matriz no registr
             "l - LIMPAR TELA\n"
             "e - ENCERRAR EXECUCAO DO PROGRAMA\n");
         }else if(resp == '1'){
-            printf("DIGITE O NRO DO REGISTRO PARA INSERIR A MATRIZ. USE MÁXIMO+1 PRA CRIAR UM NOVO REGISTRO.\n");
+            printf("DIGITE O NRO DO unasREGISTRO PARA INSERIR A MATRIZ. USE MÁXIMO+1 PRA CRIAR UM NOVO REGISTRO.\n"
             "QUANTIDADE DE MATRIZES NO REGISTRO (MAXIMO): %d\n"
             "OBS: COLOCAR UM VALOR MAIOR QUE ISSO INSERE NO FIM...", reg.tamanhoAtual+1);
             int registroSelecionado;
@@ -67,7 +69,7 @@ int menuOperarMatriz(){ // Permite incluir/remover/alterar uma matriz no registr
                 }
                 printf("DIGITE O NÚMERO DE LINHAS E COLUNAS, SEPARADOS POR ESPAÇO.\n");
                 int linhas, colunas;
-                scanf("%d %d", linhas, colunas);
+                scanf("%d %d", &linhas, &colunas);
                 getchar();
                 if(linhas < 1 || colunas < 1){
                     printf("NÚMERO INVÁLIDO DIGITADO, USANDO VALOR MÍNIMO (1)");
@@ -81,10 +83,10 @@ int menuOperarMatriz(){ // Permite incluir/remover/alterar uma matriz no registr
                 if(reg.tamanhoAtual == 0){
                     reg.arrayPrincipal = malloc(sizeof(MatrizEsp));
                 }else{
-                    reg.arrayPrincipal = realloc(sizeof(MatrizEsp)*reg.tamanhoAtual + 1);
+                    realloc(reg.arrayPrincipal, sizeof(MatrizEsp)*reg.tamanhoAtual + 1);
                 }
                 reg.tamanhoAtual++;
-                Inicializa_PRINCIPALMatrizEsp(reg.arrayPrincipal[reg.tamanhoAtual-1], linhas, colunas);
+                Inicializa_MatrizEsp(&reg.arrayPrincipal[reg.tamanhoAtual-1], linhas, colunas);
                 printf("ADICIONADA COM SUCESSO! RETORNANDO...\n");
             }else if(registroSelecionado <= reg.tamanhoAtual && registroSelecionado > 0){ //Substituir registro
                 printf("JÁ EXISTE UMA MATRIZ NO REGISTRO ATUAL, GOSTARIA DE SUBSTITUI-LA? (Y/N)\n");
@@ -93,7 +95,7 @@ int menuOperarMatriz(){ // Permite incluir/remover/alterar uma matriz no registr
                 if(confirm == 'Y' || confirm == 'y'){
                     printf("CONFIRMADO. DIGITE O NÚMERO OPERACOES C/ DE LINHAS E COLUNAS DA NOVA MATRIZ\n");
                     int linhas, colunas;
-                    scanf("%d %d", linhas, colunas);
+                    scanf("%d %d", &linhas, &colunas);
                     getchar();
                     if(linhas < 1 || colunas < 1){
                         printf("NÚMERO INVÁLIDO DIGITADO, USANDO VALOR MÍNIMO (1)");
@@ -107,13 +109,13 @@ int menuOperarMatriz(){ // Permite incluir/remover/alterar uma matriz no registr
                     if(reg.tamanhoAtual == 0){
                         reg.arrayPrincipal = malloc(sizeof(MatrizEsp));
                     }else{
-                        reg.arrayPrincipal = realloc(sizeof(MatrizEsp)*reg.tamanhoAtual + 1);
+                        realloc(reg.arrayPrincipal, sizeof(MatrizEsp)*reg.tamanhoAtual + 1);
                     }
                     reg.tamanhoAtual++;
-                    Inicializa_MatrizEsp(reg.arrayPrincipal[reg.tamanhoAtual-1], linhas, colunas);
+                    Inicializa_MatrizEsp(&reg.arrayPrincipal[reg.tamanhoAtual-1], linhas, colunas);
                     printf("ADICIONADA COM SUCESSO! RETORNANDO...\n");
                 }else{
-                    PRINTF("SUBSTITUIÇÃO CANCELADA, RETORNANDO AO MENU DE MATRIZES...\n");
+                    printf("SUBSTITUIÇÃO CANCELADA, RETORNANDO AO MENU DE MATRIZES...\n");
                 }
             } else { //Seleção inválida
                 printf("REGISTRO SELECIONADO INVÁLIDO. RETORNANDO AO MENU DE MATRIZES\n\n");
@@ -122,7 +124,7 @@ int menuOperarMatriz(){ // Permite incluir/remover/alterar uma matriz no registr
             printf("FUNÇÃO INDISPONIVEL, RETORNANDO AO MENU DE MATRIZES.");
         }else if(resp == '3'){
             if(reg.tamanhoAtual != 0){
-                printf("QUAL REGISTRO GOSTARIA DE EDITAR? (min. 1, máx. %d)\n" reg.tamanhoAtual);
+                printf("QUAL REGISTRO GOSTARIA DE EDITAR? (min. 1, máx. %d)\n", reg.tamanhoAtual);
                 int registroSelecionado;
                 scanf("%d", &registroSelecionado);
                 getchar();
@@ -132,17 +134,17 @@ int menuOperarMatriz(){ // Permite incluir/remover/alterar uma matriz no registr
                     printf("DIGITE A LINHA, COLUNA E O VALOR A SER INSERIDO, SEPARADOS POR ESPAÇO:\n");
                     int linhas, colunas, elemento;
                     scanf("%d %d %d", &linhas, &colunas, &elemento);
-                    EntradaMatriz en = malloc(sizeof(EntradaMatriz));
+                    EntradaMatriz en;
                     en.coluna = colunas;
-                    en.lin = linhas;
-                    EditaValor(reg.arrayPrincipal[registroSelecionado-1], linhas, colunas, &en);
+                    en.valor = elemento;
+                    EditaValor(&reg.arrayPrincipal[registroSelecionado-1], linhas, colunas, &en);
                     printf("EDITADA COM SUCESSO! RETORNANDO...\n");
                 }
             }else{
                 printf("ERRO, NÃO HÁ MATRIZ NOS REGISTROS. PRIMEIRO ADICIONE UMA ANTES DE OPERAR OS GRAFOS.\n");
             }
         }else if(resp == '4'){
-            printf("QUAL REGISTRO GOSTARIA DE MOSTRAR? (min. 1, máx. %d)\n" reg.tamanhoAtual);
+            printf("QUAL REGISTRO GOSTARIA DE MOSTRAR? (min. 1, máx. %d)\n", reg.tamanhoAtual);
             int registroSelecionado;
             scanf("%d", &registroSelecionado);
             getchar();
@@ -153,10 +155,10 @@ int menuOperarMatriz(){ // Permite incluir/remover/alterar uma matriz no registr
                 int linhas, colunas, elemento;
                 scanf("%d %d %d", &linhas, &colunas, &elemento);
                 getchar();
-                EntradaMatriz en = malloc(sizeof(EntradaMatriz));
+                EntradaMatriz en;
                 en.coluna = colunas;
-                en.lin = linhas;
-                EditaValor(reg.arrayPrincipal[registroSelecionado-1], linhas, colunas, &en);
+                en.valor = elemento;
+                EditaValor(&reg.arrayPrincipal[registroSelecionado-1], linhas, colunas, &en);
                 printf("EDITADA COM SUCESSO! RETORNANDO...\n");
             }
         }else if(resp == '5'){
@@ -168,13 +170,13 @@ int menuOperarMatriz(){ // Permite incluir/remover/alterar uma matriz no registr
                 printf("ERRO! REGISTRO SELECIONADO NÃO CONTEM MATRIZ. RETORNANDO AO MENU DE MATRIZES.\n");
             }else{
                 printf("DIGITE A LINHA E A COLUNA DO VALOR A SER MOSTRADO:\n");
-                int linhas, colunas
+                int linhas, colunas;
                 scanf("%d %d", &linhas, &colunas);
                 getchar();
-                MostraValorPosi(reg.arrayPrincipal[registroSelecionado-1], linhas, colunas);
-            }
+                MostraValorPosi(&reg.arrayPrincipal[registroSelecionado-1], linhas, colunas);
+            };
         }else if(resp == 'R' || resp == 'r'){
-            printf("RETORNANDO AO MENU PRINCIPAL...\n")
+            printf("RETORNANDO AO MENU PRINCIPAL...\n");
             return 0;
         }else if(resp == 'l' || resp == 'L'){
             clrscr();
@@ -193,7 +195,7 @@ int menuGrafo(){ // Testa se uma matriz escolhida possui uma caracteristica sele
     char resp;
     while(resp!='e'){
         if(resp == '0'){
-            printf("----MENU DE GRAFOS, DIGITE A OPÇÃO DESEJADA----\n");
+            printf("----MENU DE GRAFOS, DIGITE A OPÇÃO DESEJADA----\n"
             "0 - MOSTRAR ESSE DIÁLOGO NOVAMENTE\n"
             "1 - MOSTRAR GRAU DE VÉRTICE\n"
             "2 - POSSUI LOOP/ARCO PARALELO\n"
@@ -214,10 +216,10 @@ int menuGrafo(){ // Testa se uma matriz escolhida possui uma caracteristica sele
             if(registroSelecionado > reg.tamanhoAtual || registroSelecionado < 0){
                 printf("ERRO! REGISTRO SELECIONADO NÃO CONTEM MATRIZ. RETORNANDO AO MENU DE GRAFOS.\n");
             }else{
-                if(reg.arrayPrincipal[registroSelecionado-1].linhas != reg.arrayPrincipal[registroSelecionado-1].colunas){
+                if(reg.arrayPrincipal[registroSelecionado-1].lin != reg.arrayPrincipal[registroSelecionado-1].col){
                     printf("ERRO! MATRIZ SELECIONADA NAO E UM GRAFO VALIDO! RETORNANDO AO MENU DE GRAFOS.\n");
                 }else{
-                    int auxColunas = reg.arrayPrincipal[registroSelecionado-1].colunas;
+                    int auxColunas = reg.arrayPrincipal[registroSelecionado-1].col;
                     printf("DIGITE O NUMERO DO VERTICE A SER TESTADO. MÁXIMO: %d\n", auxColunas);
                     int nroVertice;
                     scanf("%d", &nroVertice);
@@ -225,7 +227,7 @@ int menuGrafo(){ // Testa se uma matriz escolhida possui uma caracteristica sele
                     if(nroVertice > auxColunas){
                         printf("ERRO! VERTICE INEXISTENTE. RETORNANDO AO MENU DE GRAFOS.\n");
                     }else{
-                        int grau = mostrarGrauVertice(reg.arrayPrincipal[registroSelecionado-1], nroVertice);
+                        int grau = mostrarGrauVertice(&reg.arrayPrincipal[registroSelecionado-1], nroVertice);
                         if(grau != -1){
                             printf("GRAU DO VERTICE: %d\n", grau);
                             printf("RETORNANDO AO MENU DE GRAFOS...");
@@ -241,7 +243,7 @@ int menuGrafo(){ // Testa se uma matriz escolhida possui uma caracteristica sele
             if(registroSelecionado > reg.tamanhoAtual || registroSelecionado < 0){
                 printf("ERRO! REGISTRO SELECIONADO NÃO CONTEM GRAFO. RETORNANDO AO MENU DE GRAFOS.\n");
             }else{
-                int loop = hasLoop(reg.arrayPrincipal[registroSelecionado]);
+                int loop = hasLoop(&reg.arrayPrincipal[registroSelecionado]);
                 if(loop == 1){
                     printf("GRAFO POSSUI LOOP E/OU ARCO PARALELO.\n");
                 }else{
@@ -257,7 +259,7 @@ int menuGrafo(){ // Testa se uma matriz escolhida possui uma caracteristica sele
             if(registroSelecionado > reg.tamanhoAtual || registroSelecionado < 0){
                 printf("ERRO! REGISTRO SELECIONADO NÃO CONTEM GRAFO. RETORNANDO AO MENU DE GRAFOS.\n");
             }else{
-                int completo = isCompleto(reg.arrayPrincipal[registroSelecionado]);
+                int completo = isCompleto(&reg.arrayPrincipal[registroSelecionado]);
                 if(completo == 1){
                     printf("GRAFO COMPLETO.\n");
                 }else{
@@ -273,7 +275,7 @@ int menuGrafo(){ // Testa se uma matriz escolhida possui uma caracteristica sele
             if(registroSelecionado > reg.tamanhoAtual || registroSelecionado < 0){
                 printf("ERRO! REGISTRO SELECIONADO NÃO CONTEM GRAFO. RETORNANDO AO MENU DE GRAFOS.\n");
             }else{
-                int desconexo = isDesconexo(reg.arrayPrincipal[registroSelecionado]);
+                int desconexo = isDesconexo(&reg.arrayPrincipal[registroSelecionado]);
                 if(desconexo == 1){
                     printf("GRAFO DESCONEXO.\n");
                 }else{
@@ -288,8 +290,8 @@ int menuGrafo(){ // Testa se uma matriz escolhida possui uma caracteristica sele
             getchar();
             if(registroSelecionado > reg.tamanhoAtual || registroSelecionado < 0){
                 printf("ERRO! REGISTRO SELECIONADO NÃO CONTEM GRAFO. RETORNANDO AO MENU DE GRAFOS.\n");
-            }else{MATRIZ
-                int dominante = isDominante(reg.arrayPrincipal[registroSelecionado]);
+            }else{
+                int dominante = isDominante(&reg.arrayPrincipal[registroSelecionado]);
                 if(dominante != 0){
                     printf("GRAFO POSSUI VERTICE DOMINANTE. VERTICE: %d\n", dominante);
                 }else{
@@ -305,7 +307,7 @@ int menuGrafo(){ // Testa se uma matriz escolhida possui uma caracteristica sele
             if(registroSelecionado > reg.tamanhoAtual || registroSelecionado < 0){
                 printf("ERRO! REGISTRO SELECIONADO NÃO CONTEM GRAFO. RETORNANDO AO MENU DE GRAFOS.\n");
             }else{
-                int simples = isSimples(reg.arrayPrincipal[registroSelecionado]);
+                int simples = isSimples(&reg.arrayPrincipal[registroSelecionado]);
                 if(simples == 1){
                     printf("GRAFO SIMPLES.\n");
                 }else{
@@ -321,7 +323,7 @@ int menuGrafo(){ // Testa se uma matriz escolhida possui uma caracteristica sele
             if(registroSelecionado > reg.tamanhoAtual || registroSelecionado < 0){
                 printf("ERRO! REGISTRO SELECIONADO NÃO CONTEM MATRIZ. RETORNANDO AO MENU DE GRAFOS.\n");
             }else{
-                int direcionado = isDirecionado(reg.arrayPrincipal[registroSelecionado]);
+                int direcionado = isDirecionado(&reg.arrayPrincipal[registroSelecionado]);
                 if(direcionado == 1){
                     printf("GRAFO DIRECIONADO.\n");
                 }else{
@@ -339,16 +341,16 @@ int menuGrafo(){ // Testa se uma matriz escolhida possui uma caracteristica sele
             }else{
                 printf("DIGITE A STRING QUE REPRESENTA O CAMINHO A SER PERCORRIDO.\n"
                 "OBS: SE O GRAFO POSSUIR 10+ VERTICES, DIGITE OS NUMEROS MENORES QUE ISSO COM 0 NA FRENTE.\n");
-                char[] caminho;
+                char caminho[100];
                 scanf("%s", caminho);
-                int comp = comprimentoCaminho(reg.arrayPrincipal[registroSelecionado], caminho);
+                int comp = comprimentoCaminho(&reg.arrayPrincipal[registroSelecionado], caminho);
                 if(comp!=-1){
                     printf("COMPRIMENTO DO CAMINHO EH %d", comp);
                 };
                 printf("RETORNANDO AO MENU DE GRAFOS...\n");
             };
         }else if(resp == 'R' || resp == 'r'){
-            printf("RETORNANDO AO MENU PRINCIPAL...\n")
+            printf("RETORNANDO AO MENU PRINCIPAL...\n");
             return 0;
         }else if(resp == 'l' || resp == 'L'){
             clrscr();

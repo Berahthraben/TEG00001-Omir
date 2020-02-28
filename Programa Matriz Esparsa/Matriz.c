@@ -150,6 +150,26 @@ void MostraValorPosi(MatrizEsp *m, int linha, int coluna){
 	EntradaMatriz *p = RetornaElemPosi(aux->info, temp);
 	printf("O valor eh %d\n", p->valor);
 }
+int RetornaValorPosi(MatrizEsp *m, int linha, int coluna){
+    if(linha > m->lin){
+        printf("Erro! Fora do escopo da matriz (Insira o valor primeiro para editar o tamanho)\n");
+        return -1;
+    }
+	Elemento *aux;
+    aux = m->lis.lista; //apontando para linha correta, pra fazer a operacao na mesma
+    int i;
+    for(i=1;i<linha;i++){
+        aux = aux->prox;
+    }
+    // Aux agora aponta pra lista da Line "linha"
+    int temp = EncontraColuna(aux->info, coluna);
+	if(temp==-1){
+        printf("O valor eh 0\n");
+        return;
+	}
+	EntradaMatriz *p = RetornaElemPosi(aux->info, temp);
+	return p->valor;
+}
 void MostraMatriz(MatrizEsp *m){
 	int i, j;
 	Elemento *aux;
@@ -178,11 +198,7 @@ void MostraMatriz(MatrizEsp *m){
                     printf(" 0");
                 }
             }
-        }EntradaMatriz en = malloc(sizeof(EntradaMatriz));
-                en.coluna = colunas;
-                en.lin = linhas;
-                EditaValor(reg.arrayPrincipal[registroSelecionado-1], linhas, colunas, &en);
-		printf("\n");
+        };
 		aux = aux->prox;
 	}
 	printf("\n");
