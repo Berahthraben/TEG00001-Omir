@@ -74,7 +74,6 @@ int isDesconexo(MatrizEsp *m){
 	aux[0] = 1;
 	while(1 == 1){
 		int a = RetornaValorPosi(m, i+1, j+1);
-		printf("VALOR EH:%d\n", a);
 		if(a > 0 && aux[j] == 0){ //salto
 			aux2[j] = i;
 			aux[j] = 1;
