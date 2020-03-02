@@ -14,7 +14,7 @@ int mostrarGrauVertice(MatrizEsp *m, int vertice){
     return grau;
 };
 
-int hasLoop(MatrizEsp *m){
+int isSimples(MatrizEsp *m){
     int i, j;
     int retorno = 0;
     //primeiro testa se elemento conecta consigo mesmo
@@ -62,39 +62,46 @@ int isCompleto(MatrizEsp *m){
 };
 
 int isDesconexo(MatrizEsp *m){
-    int i, j = 0, vertice;
+    int i = 0, j = 0, z;
     int desconexo = 0;
-    int elemAnterior = 0;
-    //
-    for(vertice = 0; vertice < m->lin-1 ; vertice++){
-        for(i = 0; i < m->lin ; i++){
-            for(j; j < m->col; j++){
-                if( i < j ){
-                    int a = RetornaValorPosi(m, i+1, j+1);
-                    if(a > 0){ //seguir valor
-                        i = j-1;
-                        j = i-1;
-                        break;
-                    }else if(j = m->col-1 && a < 1 && a!=-1){ //desconexo
-                        desconexo = 1;
-                        break;
-                    };
-                };
-            };
-            if(desconexo == 1){
-                break;
-            };
-        };
-        j = 0;
-        if(desconexo == 1){
-            break;
-        };
-    };
+	int *aux = malloc(sizeof(int)*m->lin); //vetor para teste final
+	int *aux2 = malloc(sizeof(int)*m->lin); //aux pra sequencia de pulos
+	for(i = 0 ; i < m->lin ; i++){
+		aux[i] = 0;
+		aux2[i] = -1;
+	}
+	i = 0;
+	aux[0] = 1;
+	while(1 == 1){
+		int a = RetornaValorPosi(m, i+1, j+1);
+		printf("VALOR EH:%d\n", a);
+		if(a > 0 && aux[j] == 0){ //salto
+			aux2[j] = i;
+			aux[j] = 1;
+			int temp = i;
+			i = j;
+			j = temp-1;
+		}else if(j == m->lin-1){
+			if(aux2[i] == -1){
+				break;
+			}
+			int temp = i;
+			i = aux2[i];
+			j = temp;
+		}else{
+			j++;
+		}
+	}
+	for(i = 0; i < m->lin ; i++){
+		if(aux[i] == 0){
+			desconexo = 1;
+		}
+	}
+	free(aux);
+	free(aux2);
+	return desconexo;
 };
 int isDominante(MatrizEsp *m){
-    return 0;
-}
-int isSimples(MatrizEsp *m){
     return 0;
 }
 int isDirecionado(MatrizEsp *m){

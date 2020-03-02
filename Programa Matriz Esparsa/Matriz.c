@@ -151,6 +151,7 @@ void MostraValorPosi(MatrizEsp *m, int linha, int coluna){
 	printf("O valor eh %d\n", p->valor);
 }
 int RetornaValorPosi(MatrizEsp *m, int linha, int coluna){
+	printf("%d %d\n", linha, coluna);
     if(linha > m->lin){
         printf("Erro! Fora do escopo da matriz (Insira o valor primeiro para editar o tamanho)\n");
         return -1;
@@ -164,7 +165,6 @@ int RetornaValorPosi(MatrizEsp *m, int linha, int coluna){
     // Aux agora aponta pra lista da Line "linha"
     int temp = EncontraColuna(aux->info, coluna);
 	if(temp==-1){
-        printf("O valor eh 0\n");
         return 0;
 	}
 	EntradaMatriz *p = RetornaElemPosi(aux->info, temp);
