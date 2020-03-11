@@ -13,13 +13,16 @@ header = [[sg.Text(' ' + h, size=(2, 1)) for h in headings]]
 input_rows = [[sg.Input(size=(3, 1), pad=(1, 1)) for col in range(2)] for row in range(2)]
 layoutMain = [[sg.Text('Importar grafo de um arquivo')],
               [sg.Input(key='buscarArquivo', enable_events=True), sg.FileBrowse("Buscar", target='buscarArquivo')],
-              [sg.Text('Direcionado:', font='Arial 12'),
-               sg.Text('N/D', key='isDirecionado', font='Arial 12'),
-               sg.Text('Incid. ou Adjac.:', font='Arial 12'),
-               sg.Text('N/D', key='incidAdjac', font='Arial 12')],
+              [sg.Text('Direcionado:', font='Arial 14'),
+               sg.Text('N/D', key='isDirecionado', font='Arial 14')],
               [sg.Button("Grau de vértice", key='grauNo'), sg.Button("Matriz do complemento (IN PROGRESS)")],
               [sg.Button("Visualizar/Editar matriz adjacência", key='abrirEditar')]]
 
+"""
+
+   ## PROCESSAMENTO DO MENU PRINCIPAL
+   
+"""
 
 def main(args):
     global direcionado
@@ -46,11 +49,15 @@ def main(args):
                     window_main['isDirecionado'].update("Sim")
                 else:
                     window_main['isDirecionado'].update("Não")
-                
         elif event == None:
             break
             
                 
+"""
+
+   ## TESTA SE A MATRIZ GLOBAL É DIRECIONADA
+   
+"""
 
 def testar_direcionado():
     global matriz_main
@@ -59,6 +66,12 @@ def testar_direcionado():
             if(matriz_main[i][j] != matriz_main[j][i]):
                 return True
     return False
+    
+"""
+
+   ## CARREGA O ARQUIVO INFORMADO NO MENU PRINCIPAL PRA DENTRO DO PROGRAMA
+   
+"""    
 
 def carregar_arquivo(path):
     if not path.endswith('txt'):
@@ -90,6 +103,12 @@ def carregar_arquivo(path):
     sg.Popup("Importada com sucesso!")
     return 1
     
+"""
+
+   ## ABRE E OPERA O DIALOGO DE EDITAR/VISUALIZAR MATRIZ
+   
+"""
+    
 def abrir_editar():
     global direcionado
     layout_editar = gerar_layout('editar')
@@ -98,11 +117,11 @@ def abrir_editar():
                               font='Arial 16',
                               element_justification="center",
                               auto_size_buttons=True,
-                              auto_size_text=True)
-    fechar = False
+                              auto_size_text=True,
+                              no_titlebar = True,
+                              grab_anywhere=True)
     while True:
-        event, values = window_editar.read(close=fechar)
-        fechar = True
+        event, values = window_editar.read()
         if event == 'addVert':
             tamanho = len(matriz_main)
             novo_array = [i-i for i in range(len(matriz_main) + 1)]
@@ -115,53 +134,75 @@ def abrir_editar():
                                       font='Arial 16',
                                       element_justification="center",
                                       auto_size_buttons=True,
-                                      auto_size_text=True)
+                                      auto_size_text=True,
+                                      no_titlebar = True,
+                                      grab_anywhere=True)
         elif event == 'remVert':
             text = processar_input_vertice()
             if text != '':
                 for i in matriz_main:
-                    i.pop(text-1)
-                matriz_main.pop(text-1)
+                    i.pop(text)
+                matriz_main.pop(text)
             layout_editar = gerar_layout('editar')
+            window_editar.close()
             window_editar = sg.Window('Editar/visualizar matriz',
                                       layout_editar,
                                       font='Arial 16',
                                       element_justification="center",
                                       auto_size_buttons=True,
-                                      auto_size_text=True)
+                                      auto_size_text=True,
+                                      no_titlebar = True,
+                                      grab_anywhere=True)
+                                      
         elif event == 'conIncid':
-            fechar = False
             if direcionado :
                 sg.Popup("Conversão de matriz de adj. direcionada p/ incidencia em progresso.")
             else:
+                window_editar.close()
                 layout_incidencia = gerar_layout('incidencia')
-                event2, values2 = sg.Window('Visualizar matriz incidência',
+                window_incid = sg.Window('Visualizar matriz incidência',
                                       layout_incidencia,
                                       font='Arial 16',
                                       element_justification="center",
                                       auto_size_buttons=True,
-                                      auto_size_text=True).read(close=True)
+                                      no_titlebar = True,
+                                      grab_anywhere=True,
+                                      auto_size_text=True)
+                event2, values2 = window_incid.read(close=True)
+                if event2 == None or event2 == 'fecharIncid':
+                    window_incid.close()
             
         elif event == 'salvarEditar':
+            tam_max = ceil(log(len(matriz_main)))
             for i in range(len(matriz_main)):
                 for j in range(len(matriz_main[i])):
-                    matriz_main[i][j] = values[str(i) + str(j)]
+                    matriz_main[i][j] = values[str(i).zfill(tam_max) + str(j).zfill(tam_max)]
                     
             sg.Popup("Salvo com sucesso!")
+            window_editar.close()
             break
-        elif event == 'fecharEditar':
+        elif event in ('fecharEditar', None):
+            window_editar.close()
             break
                 
                 
+"""
+
+   ## DIALOGO PARA RECEBER O NRO DE UM VERTICE
+   
+"""                
+
 def processar_input_vertice():
     event, values = sg.Window('Seleção vértice desejado',
                               [[sg.Text('Escolha o nro. do vértice desejado')],
-                               [sg.Combo(list(range(1, len(matriz_main) + 1)), size=(3, 1))],
+                               [sg.Combo(list(range(len(matriz_main))), size=(3, 1))],
                                [sg.Button("Confirmar"),
                                 sg.Button("Cancelar", key='cancelar')]
                               ],
                               font='Arial 16',
                               element_justification="center",
+                              no_titlebar = True,
+                              grab_anywhere=True,
                               auto_size_buttons=True,
                               auto_size_text=True).read(close=True)
     if event == 'cancelar':
@@ -177,16 +218,28 @@ def processar_input_vertice():
     return text
 
 
+"""
+
+   ## GERA UM LAYOUT PARA O PYSIMPLEGUI, DEPENDENDO DO CONTEXTO
+   
+"""
+
 def gerar_layout(formato):
     if formato == 'editar':
-        headings = [str(data) for data in range(1, len(matriz_main) + 1)]
-        header = [[sg.Text(' ' + h, size=(2, 1), justification='center') for h in headings]]
         tam_max = ceil(log(len(matriz_main)))
+        headings = [str(data).zfill(tam_max) for data in range(len(matriz_main))]
+        header = [[sg.Text(h, size=(tam_max, 1), justification='center', pad=(7, 1), text_color='red') for h in headings]]
+        header[0].insert(0, sg.Text('     '))
+        tam_max = ceil(log(len(matriz_main)))
+        header_linha_row = [[sg.Text(h, size=(tam_max, 1), justification='center', pad=(7, 1), text_color='red')] for h in headings]
         input_rows = [[sg.Input(str(matriz_main[row][col]),
-                       size=(3, 1),
+                       size=(tam_max+1, 1),
                        pad=(1, 1),
+                       justification='center',
                        key=str(row).zfill(tam_max)+str(col).zfill(tam_max))
                        for col in range(len(headings))] for row in range(len(headings))]
+        for i in range(len(input_rows)):
+            input_rows[i].insert(0, header_linha_row[i][0])
         layout_retornar = header + input_rows
         layout_retornar.append([sg.Button("Adicionar vértice", key='addVert'),
         sg.Button("Remover Vértice", key='remVert'),
@@ -197,26 +250,31 @@ def gerar_layout(formato):
     elif formato == 'incidencia':
         matriz_incid = converter_matriz()
         tam_max = ceil(log(len(matriz_incid)))
-        headings = [str(data) for data in range(1, len(matriz_incid) + 1)]
+        headings = [' ' + str(data).zfill(tam_max) for data in range(len(matriz_incid) + 1)]
         header = [[]]
         for h in headings:
-            if tam_max > 1:
-                header[0].append(sg.Text(h.zfill(tam_max), size=(tam_max, 1), pad=(3, 1), text_color='red', justification='center'))
-            else:
-                header[0].append(sg.Text(h.zfill(tam_max), justification='center'))
-        texto_linhas = ['u' + str(data) for data in range(1, len(matriz_incid) + 1)]
-        header_linhas = [[sg.Text(texto_linhas[row],
-                              size=(1, 1),
+                header[0].append(sg.Text(h, size=(tam_max, 1), pad=(8, 1), text_color='red', justification='center'))
+        header[0].insert(0, sg.Text('      '))
+        header_linha_row = [[sg.Text('u' + str(h), size=(tam_max+1, 1), justification='center', pad=(7, 1), text_color='red')] for h in range(len(matriz_incid))]
+        text_rows = [[sg.Input(' ' + str(matriz_incid[row][col]),
+                              size=(tam_max+1, 1),
                               justification='center',
-                              pad=(1, 1)) for row in range(len(matriz_incid))]]
-        text_rows = [[sg.Text(' ' + str(matriz_incid[row][col]).zfill(tam_max),
-                              size=(tam_max, 1),
-                              justification='center',
-                              pad=(3, 1),
+                              pad=(4, 1),
+                              disabled=True,
                               key=str(row).zfill(tam_max)+str(col).zfill(tam_max)) for col in range(len(matriz_incid[row]))] for row in range(len(matriz_incid))]
-        layout_retornar = header + text_rows
+        for i in range(len(text_rows)):
+            text_rows[i].insert(0, header_linha_row[i][0])
+        button = [[sg.Button("Fechar", key='fecharIncid')]]
+        layout_retornar = header + text_rows + button
         return layout_retornar
         
+        
+"""
+
+   ## CONVERTE UMA MATRIZ DE ADJACÊNCIA EM UMA DE INCIDÊNCIA
+   
+"""
+
 def converter_matriz():
     global matriz_main
     linha = [i-i for i in range(len(matriz_main))]
@@ -234,14 +292,20 @@ def converter_matriz():
         ultimo += 1
     return retorno
     
+"""
+
+   ## CALCULA O GRAU DO NO INFORMADO
+   
+"""
+    
 def calcular_grau_no():
     text = processar_input_vertice()
     if text == '':
         return
     grau = 0
     for i in range(len(matriz_main)):
-        if matriz_main[i][text-1] > 0:
-            grau += matriz_main[i][text-1]
+        if matriz_main[i][text] > 0:
+            grau += matriz_main[i][text]
 
     sg.Popup('O grau do vértice informado é: ' + str(grau))
     return  # garantir que encerra a execução. Não sei se precisa lol.
