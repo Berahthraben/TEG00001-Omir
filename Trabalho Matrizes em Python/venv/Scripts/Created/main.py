@@ -19,7 +19,8 @@ layoutMain = [[sg.Text('Importar grafo de um arquivo')],
                sg.Text('Carregado:', font='Arial 14', pad=(1, 1)),
                sg.Text('Não', key='isCarregado', font='Arial 14', pad=(1, 1))],
               [sg.Button("Grau de vértice", key='grauNo'),
-               sg.Button("Matriz do complemento", key='complemento'),
+               sg.Button("Testar desconexão", key='testarDesconexo')],
+              [sg.Button("Matriz do complemento", key='complemento'),
                sg.Button("Ver/Editar matriz adjacência", key='abrirEditar')]]
 
 """
@@ -27,6 +28,7 @@ layoutMain = [[sg.Text('Importar grafo de um arquivo')],
    ## PROCESSAMENTO DO MENU PRINCIPAL
 
 """
+
 
 def main(args):
     global direcionado
@@ -41,9 +43,15 @@ def main(args):
     while True:
         event, values = window_main.read()
         if event == 'grauNo':
-            calcular_grau_no()
+            if not matriz_main:
+                sg.Popup("Primeiro carregue um grafo no registro!")
+            else:
+                calcular_grau_no()
         elif event == 'abrirEditar':
-            abrir_editar()
+            if not matriz_main:
+                sg.Popup("Primeiro carregue um grafo no registro!")
+            else:
+                abrir_editar()
         elif event == 'buscarArquivo':
             sucesso = carregar_arquivo(values['buscarArquivo'])
             if sucesso == 1:
@@ -54,8 +62,20 @@ def main(args):
                     window_main['isDirecionado'].update("Não")
                 window_main['isCarregado'].update("Sim")
         elif event == 'complemento':
-            abrir_complemento()
-        elif event == None:
+            if not matriz_main:
+                sg.Popup("Primeiro carregue um grafo no registro!")
+            else:
+                abrir_complemento()
+        elif event == 'testarDesconexo':
+            if not matriz_main:
+                sg.Popup("Primeiro carregue um grafo no registro!")
+            else:
+                desconexo = testar_conexo()
+                if desconexo:
+                    sg.Popup("Grafo é desconexo!")
+                else:
+                    sg.Popup("Grafo não é desconexo!")
+        elif event is None:
             break
 
 
@@ -64,6 +84,7 @@ def main(args):
    ## ABRE DIÁLOGO DO COMPLEMENTO
 
 """
+
 
 def abrir_complemento():
     layout_complemento = gerar_layout('complemento')
@@ -76,14 +97,16 @@ def abrir_complemento():
                                    grab_anywhere=True,
                                    auto_size_text=True)
     event2, values2 = window_complemento.read(close=True)
-    if event2 == None or event2 == 'fecharCompl':
+    if event2 is None or event2 == 'fecharCompl':
         window_complemento.close()
+
 
 """
 
    ## ABRE E OPERA O DIALOGO DE EDITAR/VISUALIZAR MATRIZ
 
 """
+
 
 def abrir_editar():
     global direcionado
@@ -139,7 +162,7 @@ def abrir_editar():
                                   auto_size_buttons=True,
                                   auto_size_text=True)
             event2, values2 = window_incid.read(close=True)
-            if event2 == None or event2 == 'fecharIncid':
+            if event2 is None or event2 == 'fecharIncid':
                 window_incid.close()
 
         elif event == 'salvarEditar':
@@ -151,15 +174,17 @@ def abrir_editar():
             sg.Popup("Salvo com sucesso!")
             window_editar.close()
             break
-        elif event == 'fecharEditar' or event == None:
+        elif event == 'fecharEditar' or event is None:
             window_editar.close()
             break
+
 
 """
 
    ## CALCULA O GRAU DO NO INFORMADO
 
 """
+
 
 def calcular_grau_no():
     global direcionado
@@ -185,11 +210,13 @@ def calcular_grau_no():
         sg.PopupOK('Grau de entrada: ' + str(grau_entrada) + '\n' + 'Grau de saída: ' + str(grau_saida) + '\n')
     return  # garantir que encerra a execução. Não sei se precisa lol.
 
+
 """
 
    ## CARREGA O ARQUIVO INFORMADO NO MENU PRINCIPAL PRA DENTRO DO PROGRAMA
 
 """
+
 
 def carregar_arquivo(path):
     if not path.endswith('txt'):
@@ -221,11 +248,13 @@ def carregar_arquivo(path):
     sg.Popup("Importada com sucesso!")
     return 1
 
+
 """
 
    ## CONVERTE UMA MATRIZ DE ADJACÊNCIA EM UMA DE INCIDÊNCIA
 
 """
+
 
 def converter_matriz(formato):
     global matriz_main
@@ -267,11 +296,13 @@ def converter_matriz(formato):
     return retorno
 
 
+
 """
 
    ## GERA UM LAYOUT PARA O PYSIMPLEGUI, DEPENDENDO DO CONTEXTO
 
 """
+
 
 def gerar_layout(formato):
     global direcionado
@@ -338,11 +369,13 @@ def gerar_layout(formato):
         layout_retornar = header + text_rows + button
         return layout_retornar
 
+
 """
 
    ## DIALOGO PARA RECEBER O NRO DE UM VERTICE
 
 """
+
 
 def processar_input_vertice():
     event, values = sg.Window('Seleção vértice desejado',
@@ -355,7 +388,7 @@ def processar_input_vertice():
                               element_justification="center",
                               auto_size_buttons=True,
                               auto_size_text=True).read(close=True)
-    if event == 'cancelar' or event == None:
+    if event == 'cancelar' or event is None:
         return ''
     try:
         text = int(values[0])
@@ -367,18 +400,63 @@ def processar_input_vertice():
         return ''
     return text
 
+
 """
 
    ## TESTA SE A MATRIZ GLOBAL É DIRECIONADA
 
 """
 
+
 def testar_direcionado():
     global matriz_main
     for i in range(len(matriz_main)):
         for j in range(len(matriz_main)):
-            if(matriz_main[i][j] != matriz_main[j][i]):
+            if matriz_main[i][j] != matriz_main[j][i]:
                 return True
     return False
+
+
+"""
+
+   ## TESTA SE A MATRIZ GLOBAL É DIRECIONADA
+
+"""
+
+
+def testar_conexo():
+    global matriz_main
+    desconexo = False
+    i = 0
+    j = 0
+    aux = []
+    aux2 = []
+    for i in range(len(matriz_main)):
+        aux.append(0)
+        aux2.append(-1)
+    i = 0
+    aux[0] = 1
+    while True:
+        a = matriz_main[i][j]
+        if a > 0 and aux[j] == 0:
+            aux2[j] = i
+            aux[j] = 1
+            temp = i
+            i = j
+            j = temp - 1
+        elif j == len(matriz_main)-2:
+            if aux2[i] == -1:
+                break
+            temp = i
+            i = aux2[i]
+            j = temp
+        else:
+            j = j+1
+    for i in range(len(matriz_main)):
+        if aux[i] == 0:
+            desconexo = True
+            break
+    return desconexo
+
 
 main([])
