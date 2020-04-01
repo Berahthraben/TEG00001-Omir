@@ -21,7 +21,8 @@ layoutMain = [[sg.Text('Importar grafo de um arquivo')],
               [sg.Button("Grau de vértice", key='grauNo'),
                sg.Button("Testar desconexão", key='testarDesconexo')],
               [sg.Button("Matriz do complemento", key='complemento'),
-               sg.Button("Ver/Editar matriz adjacência", key='abrirEditar')]]
+               sg.Button("Ver/Editar matriz adjacência", key='abrirEditar')],
+              [sg.Button("Testar Circuito Euleriano (Fleury)", key='fleury')]]
 
 """
 
@@ -46,7 +47,7 @@ def main(args):
             if not matriz_main:
                 sg.Popup("Primeiro carregue um grafo no registro!")
             else:
-                calcular_grau_no()
+                calcular_grau_no(True, 0)
         elif event == 'abrirEditar':
             if not matriz_main:
                 sg.Popup("Primeiro carregue um grafo no registro!")
@@ -70,13 +71,109 @@ def main(args):
             if not matriz_main:
                 sg.Popup("Primeiro carregue um grafo no registro!")
             else:
-                desconexo = testar_conexo()
+                desconexo = testar_conexo(matriz_main)
                 if desconexo:
                     sg.Popup("Grafo é desconexo!")
                 else:
                     sg.Popup("Grafo não é desconexo!")
+        elif event == 'fleury':
+            if not matriz_main:
+                sg.Popup("Primeiro carregue um grafo no registro!")
+            else:
+                processar_fleury()
         elif event is None:
             break
+
+
+"""
+
+   ## ALGORITMO DE FLEURY
+
+"""
+
+
+def processar_fleury():
+    global matriz_main
+    matriz_teste = copy.deepcopy(matriz_main)
+    numero_impares = 0
+    vertice_impar = 0
+    if testar_conexo(matriz_main):
+        sg.Popup("Não existe caminho Euleriano. Grafo é naturalmente desconexo.")
+    for i in range(len(matriz_main)):
+        grau = calcular_grau_no(False, i)
+        if grau % 2 != 0:
+            numero_impares = numero_impares + 1
+            vertice_impar = i
+            if numero_impares > 2:
+                sg.Popup("Não existe caminho Euleriano. Mais de dois vértices com grau ímpar.")
+                return
+    if numero_impares == 1:
+        sg.Popup("Não existe caminho Euleriano. Apenas um vértice tem grau ímpar.")
+        return
+    elif numero_impares == 2:
+        pontes = testar_pontes()
+        print(pontes)
+        i = vertice_impar  # Começar do vertice na var vertice_impar
+        j = 0
+        aux = [vertice_impar]
+        while True:
+            a = matriz_teste[i][j]
+            if a > 0:
+                if [i, j] in pontes:
+                    for k in range(len(matriz_teste[i])):  # Testa pra ver se existe outras opções
+                        if k == j:
+                            continue
+                        if matriz_teste[i][k] > 0:
+                            matriz_teste[i][k] = 0  # Elimina a aresta inicial
+                            matriz_teste[k][i] = 0  # Elimina a aresta final
+                            if k not in aux:
+                                aux.append(k)
+                            i, j = k, 0
+                        if k == len(matriz_teste)-1:  # Pular pela ponte
+                            matriz_teste[i][j] = 0
+                            matriz_teste[j][i] = 0
+                            if j not in aux:
+                                aux.append(j)
+                            i, j = j, 0
+                else:
+                    matriz_teste[i][j] = 0
+                    matriz_teste[j][i] = 0
+                    aux.append(j)
+                    i, j = j, i
+            elif a == 0 and j == len(matriz_teste) - 1:
+                break
+            else:
+                j = j + 1
+        if len(aux) < len(matriz_teste):
+            print(aux)
+            sg.Popup("Não existe caminho euleriano")
+        else:
+            print(aux)
+            sg.Popup("Existe caminho euleriano")
+
+
+"""
+
+    ## TESTA QUAIS VÉRTICES SÃO PONTES
+
+"""
+
+
+def testar_pontes():
+    global matriz_main
+    matriz_teste = copy.deepcopy(matriz_main)
+    pontes = []
+    for i in range(len(matriz_teste)):
+        for j in range(len(matriz_teste[i])):
+            if matriz_teste[i][j] > 0:
+                matriz_teste[i][j] = 0
+                matriz_teste[j][i] = 0
+                desconexo = testar_conexo(matriz_teste)
+                if desconexo:
+                    pontes.append([i, j])
+                matriz_teste[i][j] = 1
+                matriz_teste[j][i] = 1
+    return pontes
 
 
 """
@@ -169,8 +266,7 @@ def abrir_editar():
             tam_max = ceil(log(len(matriz_main)))
             for i in range(len(matriz_main)):
                 for j in range(len(matriz_main[i])):
-                    matriz_main[i][j] = values[str(i).zfill(tam_max) + str(j).zfill(tam_max)]
-
+                    matriz_main[i][j] = int(values[str(i).zfill(tam_max) + str(j).zfill(tam_max)])
             sg.Popup("Salvo com sucesso!")
             window_editar.close()
             break
@@ -186,18 +282,23 @@ def abrir_editar():
 """
 
 
-def calcular_grau_no():
+def calcular_grau_no(mostraresultado, no):
     global direcionado
-    text = processar_input_vertice()
+    text = no
+    if mostraresultado:
+        text = processar_input_vertice()
     if text == '':
         return
     if not direcionado:
         grau = 0
         for i in range(len(matriz_main)):
             if matriz_main[i][text] > 0:
-                grau += matriz_main[i][text]
-
-        sg.PopupOK('O grau do vértice informado é: ' + str(grau))
+                grau = grau + matriz_main[i][text]
+        if mostraresultado:
+            sg.PopupOK('O grau do vértice informado é: ' + str(grau))
+            return
+        else:
+            return grau
     else:
         grau_entrada = 0
         grau_saida = 0
@@ -207,8 +308,11 @@ def calcular_grau_no():
                 grau_entrada += 1
             if matriz_main[text][i] > 0:
                 grau_saida += 1
-        sg.PopupOK('Grau de entrada: ' + str(grau_entrada) + '\n' + 'Grau de saída: ' + str(grau_saida) + '\n')
-    return  # garantir que encerra a execução. Não sei se precisa lol.
+        if mostraresultado:
+            sg.PopupOK('Grau de entrada: ' + str(grau_entrada) + '\n' + 'Grau de saída: ' + str(grau_saida) + '\n')
+            return
+        else:
+            return grau_entrada
 
 
 """
@@ -323,8 +427,8 @@ def gerar_layout(formato):
             input_rows[i].insert(0, header_linha_row[i][0])
         layout_retornar = header + input_rows
         layout_retornar.append([sg.Button("Adicionar vértice", key='addVert'),
-        sg.Button("Remover Vértice", key='remVert'),
-        sg.Button("Converter incidência", key='conIncid'),
+        sg.Button("Remover Vértice", key='remVert')])
+        layout_retornar.append([sg.Button("Converter incidência", key='conIncid'),
         sg.Button("Salvar", key='salvarEditar'),
         sg.Button("Fechar", key='fecharEditar')])
         return layout_retornar
@@ -424,35 +528,32 @@ def testar_direcionado():
 """
 
 
-def testar_conexo():
-    global matriz_main
+def testar_conexo(matriz):
     desconexo = False
     i = 0
     j = 0
     aux = []
     aux2 = []
-    for i in range(len(matriz_main)):
+    for i in range(len(matriz)):
         aux.append(0)
         aux2.append(-1)
     i = 0
     aux[0] = 1
     while True:
-        a = matriz_main[i][j]
+        a = matriz[i][j]
         if a > 0 and aux[j] == 0:
             aux2[j] = i
             aux[j] = 1
-            temp = i
-            i = j
-            j = temp - 1
-        elif j == len(matriz_main)-2:
+            i, j = j, i
+        elif j == len(matriz)-1:
             if aux2[i] == -1:
                 break
             temp = i
             i = aux2[i]
             j = temp
         else:
-            j = j+1
-    for i in range(len(matriz_main)):
+            j = j + 1
+    for i in range(len(matriz)):
         if aux[i] == 0:
             desconexo = True
             break

@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1f4eaa43-4abc-4abd-bb40-ee8ae40faf43" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/20191224_002937_rE4_icon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Scripts/Created/MatrizConexa.txt" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/Created/MatrizConexa.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/venv/Scripts/Created/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Scripts/Created/main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +18,18 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/venv/Scripts/Created/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="355">
-              <caret line="63" column="36" lean-forward="true" selection-start-line="63" selection-start-column="36" selection-end-line="63" selection-end-column="36" />
+            <state relative-caret-position="476">
+              <caret line="145" column="25" lean-forward="true" selection-start-line="145" selection-start-column="25" selection-end-line="145" selection-end-column="25" />
+              <folding>
+                <element signature="e#3128#3786#0" />
+                <element signature="e#3882#6960#0" />
+                <element signature="e#7300#8055#0" />
+                <element signature="e#7964#8811#0" />
+                <element signature="e#8922#10398#0" />
+                <element signature="e#10509#14384#0" />
+                <element signature="e#14481#15443#0" />
+                <element signature="e#15533#15731#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -32,6 +43,14 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>testar_conexo</find>
+      <find>+=</find>
+      <find>calcular_grau_no</find>
+      <find>print(</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
@@ -43,9 +62,9 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="696" />
-    <option name="width" value="991" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="833" />
+    <option name="width" value="854" />
     <option name="height" value="1017" />
   </component>
   <component name="ProjectView">
@@ -197,12 +216,13 @@
       <option name="presentableId" value="Default" />
       <updated>1583674066422</updated>
       <workItem from="1583674071172" duration="5947000" />
-      <workItem from="1585050442250" duration="4459000" />
+      <workItem from="1585050442250" duration="5059000" />
+      <workItem from="1585740541544" duration="12378000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="10406000" />
+    <option name="totallyTimeSpent" value="23384000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -214,7 +234,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1696" height="1026" extended-state="6" />
+    <frame x="833" y="0" width="854" height="1017" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.42105263" />
@@ -249,8 +269,18 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/venv/Scripts/Created/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="355">
-          <caret line="63" column="36" lean-forward="true" selection-start-line="63" selection-start-column="36" selection-end-line="63" selection-end-column="36" />
+        <state relative-caret-position="476">
+          <caret line="145" column="25" lean-forward="true" selection-start-line="145" selection-start-column="25" selection-end-line="145" selection-end-column="25" />
+          <folding>
+            <element signature="e#3128#3786#0" />
+            <element signature="e#3882#6960#0" />
+            <element signature="e#7300#8055#0" />
+            <element signature="e#7964#8811#0" />
+            <element signature="e#8922#10398#0" />
+            <element signature="e#10509#14384#0" />
+            <element signature="e#14481#15443#0" />
+            <element signature="e#15533#15731#0" />
+          </folding>
         </state>
       </provider>
     </entry>
